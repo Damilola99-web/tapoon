@@ -34,6 +34,28 @@ class PostService {
         }
     }
 
+    public async update(id: Object, title: string, body: string): Promise<Post | null> {
+        try {
+            const post = await this.post.findOneAndUpdate(
+                { _id: id },
+                { title, body },
+                { new: true }
+            );
+            return post;
+        } catch (error) {
+            throw new Error('Unable to update post');
+        }
+    }
+
+    public async delete(id: Object): Promise<Post | null> {
+        try {
+            const post = await this.post.findOneAndDelete({ _id: id });
+            return post;
+        } catch (error) {
+            throw new Error('Unable to delete post');
+        }
+    }
+
 
 
 }

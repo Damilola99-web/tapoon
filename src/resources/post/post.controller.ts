@@ -30,6 +30,17 @@ class PostController implements Controller {
             `${this.path}/:id`,
             this.findAPost
         );
+
+        this.router.put(
+            `${this.path}/:id`,
+            validationMiddleware(validate.update),
+            this.updateAPost
+        );
+
+        this.router.delete(
+            `${this.path}/:id`,
+            this.deleteAPost
+        );
     }
 
     private create = async (
@@ -75,6 +86,43 @@ class PostController implements Controller {
                 throw new HttpException(404, `Post with id ${id} not found`);
             }
             res.status(200).json({ post });
+        } catch (error: any) {
+            next(new HttpException(400, error.message))
+        }
+    }
+
+    private updateAPost = async (
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ): Promise<Response | void> => {
+        try {
+            const { id } = req.params;
+            const { title, body } = req.body;
+            const post = await this.PostService.findSinglePost({ _id: id });
+            if (!post) {
+                throw new HttpException(404, `Post with id ${id} not found`);
+            }
+            const updatedPost = await this.PostService.update(id, title, body);
+            res.status(200).json({ updatedPost });
+        } catch (error: any) {
+            next(new HttpException(400, error.message))
+        }
+    }
+
+    private deleteAPost = async (
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ): Promise<Response | void> => {
+        try {
+            const { id } = req.params;
+            const post = await this.PostService.findSinglePost({ _id: id });
+            if (!post) {
+                throw new HttpException(404, `Post with id ${id} not found`);
+            }
+            await this.PostService.delete(id);
+            res.status(200).json({ message: `Post with id ${id} deleted` });
         } catch (error: any) {
             next(new HttpException(400, error.message))
         }
