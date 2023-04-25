@@ -9,7 +9,7 @@ const axios = require('axios');
     const config = {
         headers: {
             Authorization:
-                'Bearer sk_test_6ab42ca6540abb4b866242f32f6f86b48c9b39e9',
+                'Bearer sk_test_',
             'Content-Type': 'application/json',
         },
     };
